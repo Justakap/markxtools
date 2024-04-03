@@ -5,10 +5,11 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const app = express();
-const UserModel = require('../backend/models/user')
-const DepositModel = require('../backend/models/deposit')
-const ChipsModel = require('../backend/models/chips')
-const RouletteModel = require('../backend/models/roulette')
+
+const UserModel = require('./models/user')
+const DepositModel = require('./models/deposit')
+const ChipsModel = require('./models/chips')
+const RouletteModel = require('./models/roulette')
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
