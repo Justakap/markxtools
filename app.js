@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const port = 9000;
 const axios = require('axios');
 const express = require("express");
