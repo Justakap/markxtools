@@ -10,20 +10,24 @@ const UserModel = require('./models/user')
 const DepositModel = require('./models/deposit')
 const ChipsModel = require('./models/chips')
 const RouletteModel = require('./models/roulette')
+const LoanModel = require('./models/loan');
+const courseModel = require('./models/credits');
+
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 const allowedOrigins = ['http://localhost:3000', 'https://markxtools.netlify.app'];
 const corsOptions = {
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
     }
-  };
-  app.use(cors(corsOptions));
+};
+app.use(cors(corsOptions));
 
 mongoose.connect("mongodb+srv://anantk15:root@cluster0.972saxu.mongodb.net/wallet?retryWrites=true&w=majority").then(() => {
     console.log("success mon")
@@ -232,8 +236,18 @@ app.get('/chips', (req, res) => {
         .then(data => res.json(data))
         .catch(err => res.json(err))
 })
+app.get('/loans', (req, res) => {
+    LoanModel.find()
+        .then(data => res.json(data))
+        .catch(err => res.json(err))
+})
 app.get('/roulette', (req, res) => {
     RouletteModel.find()
+        .then(data => res.json(data))
+        .catch(err => res.json(err))
+})
+app.get('/credits', (req, res) => {
+    courseModel.find()
         .then(data => res.json(data))
         .catch(err => res.json(err))
 })
@@ -302,13 +316,62 @@ app.put('/addAmount', async (req, res) => {
         // Update user balance
         const updatedUser = await UserModel.findOneAndUpdate(
             { email },
-            { $inc: { balance: amount } },
+            {
+                $inc: {
+                    balance: amount, // Increment balance
+                    LoanAmount: amount * 1.2 // Increment loanAmount
+                }
+            },
             { new: true }
         );
 
         // Create deposit entry
         const deposit = new DepositModel({
             amount: amount,
+            email: email
+        });
+        const savedDeposit = await deposit.save();
+
+        // Check if user was not found
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if deposit was not saved
+        if (!savedDeposit) {
+            return res.status(500).json({ error: 'Error adding deposit' });
+        }
+
+        res.status(200).json("updated");
+    } catch (error) {
+        console.error('Error updating user balance:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+app.put('/depositLoan', async (req, res) => {
+    try {
+        const { loanAmount, email } = req.body;
+        const user = await UserModel.findOne({ email: email })
+        if (user.LoanAmount < loanAmount) {
+            return res.status(500).json("GAmount")
+        } else {
+
+        }
+        // Update user balance
+        const updatedUser = await UserModel.findOneAndUpdate(
+            { email },
+            {
+                $inc: {
+                    balance: -loanAmount, // Increment balance
+                    LoanAmount: -loanAmount // Increment loanAmount
+                }
+            },
+            { new: true }
+        );
+
+        // Create deposit entry
+        const deposit = new DepositModel({
+            amount: -loanAmount,
             email: email
         });
         const savedDeposit = await deposit.save();

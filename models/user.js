@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema({
   chipsBalance: {
     default: 0,
     type: Number
+  },
+  LoanAmount: {
+    default: 0,
+    type: Number
   }
 
 });
