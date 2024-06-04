@@ -15,11 +15,11 @@ const marksSchema = new mongoose.Schema({
     },
     IA: {
         type: Number,
-        required: true
+        // required: true
     },
     ETE: {
         type: Number,
-        required: true
+        // required: true
     },
     Total: {
         type: Number
@@ -27,21 +27,21 @@ const marksSchema = new mongoose.Schema({
 });
 
 const courseSchema = new mongoose.Schema({
-    CourseTitle: {
+    Course_Title: {
         type: String,
-        required: true
+        // required: true
     },
-    Contacthrs_per_week: {
+    credits: {
         type: Number,
         required: true
     },
-    Marks: {
-        type: marksSchema,
+    code: {
+        type: String,
         required: true
     },
     Credits: {
         type: Number,
-        required: true
+        // required: true
     }
 });
 

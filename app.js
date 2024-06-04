@@ -60,6 +60,41 @@ app.get('/cric', async (req, res) => {
     }
 });
 
+// for result analysis 
+
+app.post('/newSubject',async (req, res) => {
+
+    const { code, credits } = req.body;
+
+    data = {
+        code: code,
+        credits: credits
+    }
+    try {
+
+        const check = await courseModel.findOne({ code: code })
+        if (check) {
+            return res.json("exist")
+        } else {
+            const insertCourse = courseModel.insertMany(data)
+            if (insertCourse) {
+                res.json("added")
+            } else {
+                res.json("nadded")
+            }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+
+
+
+
+
+
+
 // ai based image api 
 
 app.post('/aiImageGenerator', async (req, res) => {
